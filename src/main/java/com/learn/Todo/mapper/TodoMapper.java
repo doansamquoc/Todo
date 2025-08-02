@@ -14,6 +14,7 @@ public interface TodoMapper {
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "completedAt", ignore = true)
     Todo toTodoCreationRequest(TodoCreationRequest request);
 
     TodoResponse toTodoResponse(Todo todo);

@@ -21,9 +21,8 @@ import lombok.experimental.FieldDefaults;
 public class TodoResponse {
     Long id;
     String text;
-    LocalDateTime startTime;
-    LocalDateTime endTime;
     TodoStatus status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
+    LocalDateTime completedAt;
 }
