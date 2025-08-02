@@ -1,8 +1,11 @@
 package com.learn.Todo.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -19,31 +22,66 @@ import com.learn.Todo.service.TodoService;
 @RestController
 @RequestMapping("/todo")
 public class TodoController {
-    @Autowired
-    TodoService todoService;
+        @Autowired
+        TodoService todoService;
 
-    @PostMapping("/create")
-    public ResponseEntity<BaseResponse<TodoResponse>> create(@RequestBody TodoCreationRequest request) {
-        TodoResponse todoResponse = todoService.createTodo(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                BaseResponse.<TodoResponse>builder()
-                        .success(true)
-                        .statusCode(HttpStatus.CREATED.value())
-                        .message("TODO has been successfully created.")
-                        .data(todoResponse)
-                        .build());
-    }
+        @PostMapping("/create")
+        public ResponseEntity<BaseResponse<TodoResponse>> create(@RequestBody TodoCreationRequest request) {
+                TodoResponse todoResponse = todoService.createTodo(request);
+                return ResponseEntity.status(HttpStatus.CREATED).body(
+                                BaseResponse.<TodoResponse>builder()
+                                                .success(true)
+                                                .statusCode(HttpStatus.CREATED.value())
+                                                .message("TODO has been successfully created.")
+                                                .data(todoResponse)
+                                                .build());
+        }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<BaseResponse<TodoResponse>> updateTodo(@PathVariable Long id,
-            @RequestBody TodoUpdateRequest request) {
-        TodoResponse todoResponse = todoService.updateTodoById(id, request);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                BaseResponse.<TodoResponse>builder()
-                        .success(true)
-                        .statusCode(HttpStatus.OK.value())
-                        .message("TODO has been successfully updated.")
-                        .data(todoResponse)
-                        .build());
-    }
+        @PutMapping("/update/{id}")
+        public ResponseEntity<BaseResponse<TodoResponse>> updateTodo(@PathVariable Long id,
+                        @RequestBody TodoUpdateRequest request) {
+                TodoResponse todoResponse = todoService.updateTodoById(id, request);
+                return ResponseEntity.status(HttpStatus.OK).body(
+                                BaseResponse.<TodoResponse>builder()
+                                                .success(true)
+                                                .statusCode(HttpStatus.OK.value())
+                                                .message("TODO has been successfully updated.")
+                                                .data(todoResponse)
+                                                .build());
+        }
+
+        @PostMapping("/completion/{id}")
+        public ResponseEntity<BaseResponse<TodoResponse>> completion(@PathVariable Long id) {
+                TodoResponse todoResponse = todoService.completionTodoById(id);
+                return ResponseEntity.status(HttpStatus.OK).body(
+                                BaseResponse.<TodoResponse>builder()
+                                                .statusCode(HttpStatus.OK.value())
+                                                .message("TODO has been successfully completed.")
+                                                .data(todoResponse)
+                                                .build());
+        }
+
+        @GetMapping()
+        public ResponseEntity<BaseResponse<List<TodoResponse>>> getTodos() {
+                List<TodoResponse> todoResponse = todoService.getTodos();
+                return ResponseEntity.status(HttpStatus.OK).body(
+                                BaseResponse.<List<TodoResponse>>builder()
+                                                .success(true)
+                                                .statusCode(HttpStatus.OK.value())
+                                                .message("Get TODO(s) successfully.")
+                                                .data(todoResponse)
+                                                .build());
+        }
+
+        @GetMapping("/{id}")
+        public ResponseEntity<BaseResponse<TodoResponse>> getTodo(@PathVariable Long id) {
+                TodoResponse todoResponse = todoService.getTodoById(id);
+                return ResponseEntity.status(HttpStatus.OK).body(
+                                BaseResponse.<TodoResponse>builder()
+                                                .success(true)
+                                                .statusCode(HttpStatus.OK.value())
+                                                .message("Get TODO successfully.")
+                                                .data(todoResponse)
+                                                .build());
+        }
 }
