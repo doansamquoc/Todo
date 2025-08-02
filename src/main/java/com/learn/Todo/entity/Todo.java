@@ -44,5 +44,5 @@ public class Todo {
     @UpdateTimestamp
     LocalDateTime updatedAt;
 
-    LocalDateTime CompletedAt;
+    LocalDateTime completedAt;
 }
