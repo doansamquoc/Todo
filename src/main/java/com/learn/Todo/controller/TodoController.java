@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -84,4 +85,16 @@ public class TodoController {
                                                 .data(todoResponse)
                                                 .build());
         }
+
+        @DeleteMapping("/{id}")
+        public ResponseEntity<BaseResponse<TodoResponse>> deleteTodo(@PathVariable Long id) {
+                todoService.deleteTodoById(id);
+                return ResponseEntity.status(HttpStatus.OK).body(
+                                BaseResponse.<TodoResponse>builder()
+                                                .success(true)
+                                                .statusCode(HttpStatus.OK.value())
+                                                .message("TODO has been successfully deleted.")
+                                                .build());
+        }
+
 }

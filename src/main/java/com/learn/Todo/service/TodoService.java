@@ -54,6 +54,14 @@ public class TodoService {
         return todoMapper.toTodoResponse(todoRepository.save(todo));
     }
 
+    public void deleteTodoById(Long id) {
+        try {
+            todoRepository.deleteById(id);
+        } catch (RuntimeException ex) {
+            throw new BaseException(ErrorMessage.CANNOT_DELETE_TODO);
+        }
+    }
+
     private Todo findById(Long id) {
         return todoRepository.findById(id).orElseThrow(() -> new BaseException(ErrorMessage.TODO_NOT_FOUND));
     }

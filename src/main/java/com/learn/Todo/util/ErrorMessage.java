@@ -11,7 +11,8 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum ErrorMessage {
-    TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "Not found a todo for this ID.");
+    TODO_NOT_FOUND(HttpStatus.NOT_FOUND, "Not found a TODO for this ID."),
+    CANNOT_DELETE_TODO(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot delete this TODO.");
 
     HttpStatus status;
     String message;
