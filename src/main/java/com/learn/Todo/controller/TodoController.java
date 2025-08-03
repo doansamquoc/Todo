@@ -97,4 +97,15 @@ public class TodoController {
                                                 .build());
         }
 
+        @DeleteMapping("/deleteAll")
+        public ResponseEntity<BaseResponse<TodoResponse>> deleteAllTodo() {
+                todoService.deleteTodos();
+                return ResponseEntity.status(HttpStatus.OK).body(
+                                BaseResponse.<TodoResponse>builder()
+                                                .success(true)
+                                                .statusCode(HttpStatus.OK.value())
+                                                .message("All TODO has been successfully deleted.")
+                                                .build());
+        }
+
 }

@@ -62,6 +62,14 @@ public class TodoService {
         }
     }
 
+    public void deleteTodos() {
+        try {
+            todoRepository.deleteAll();
+        } catch (RuntimeException ex) {
+            throw new BaseException(ErrorMessage.CANNOT_DELETE_TODO);
+        }
+    }
+
     private Todo findById(Long id) {
         return todoRepository.findById(id).orElseThrow(() -> new BaseException(ErrorMessage.TODO_NOT_FOUND));
     }
