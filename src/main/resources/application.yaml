@@ -4,13 +4,27 @@ server:
     whitelabel:
       enabled: false
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            scope:
+              - openid
+              - email
+              - profile
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v2/userinfo
   datasource:
     url: jdbc:mysql://localhost:3306/todo
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver
   web:
-    resource:
+    resources:
       add-mappings: false
   jpa:
     hibernate:
@@ -19,13 +33,19 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        format_sql: true
-        use_sql_comments: true
+        format-sql: true
+        use-sql-comments: true
         jdbc:
-          time_zone: Asia/Ho_Chi_Minh
+          time-zone: Asia/Ho_Chi_Minh
         dialect: org.hibernate.dialect.MySQL8Dialect
 logging:
   level:
-    org.springframework.web: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.BasicBinder: TRACE
+    org:
+      springframework:
+        web: DEBUG
+      hibernate:
+        SQL: DEBUG
+
+      type:
+        descriptor:
+          BasicBinder: TRACE

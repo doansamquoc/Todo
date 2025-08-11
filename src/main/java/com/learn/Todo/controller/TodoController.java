@@ -21,7 +21,7 @@ import com.learn.Todo.dto.response.TodoResponse;
 import com.learn.Todo.service.TodoService;
 
 @RestController
-@RequestMapping("/todo")
+@RequestMapping("/api/todo")
 public class TodoController {
         @Autowired
         TodoService todoService;
