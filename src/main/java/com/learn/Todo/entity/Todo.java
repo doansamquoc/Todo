@@ -36,7 +36,7 @@ public class Todo {
     String text;
 
     @Builder.Default
-    TodoStatus status = TodoStatus.INCOMPLETE;
+    TodoStatus status = TodoStatus.PENDING;
 
     @CreationTimestamp
     LocalDateTime createdAt;

@@ -1,8 +1,7 @@
 package com.learn.Todo.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,10 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.learn.Todo.dto.request.TodoCreationRequest;
 import com.learn.Todo.dto.request.TodoUpdateRequest;
+import com.learn.Todo.dto.request.TodoUpdateStatusRequest;
 import com.learn.Todo.dto.response.BaseResponse;
 import com.learn.Todo.dto.response.TodoResponse;
 import com.learn.Todo.service.TodoService;
@@ -63,10 +64,13 @@ public class TodoController {
         }
 
         @GetMapping()
-        public ResponseEntity<BaseResponse<List<TodoResponse>>> getTodos() {
-                List<TodoResponse> todoResponse = todoService.getTodos();
+        public ResponseEntity<BaseResponse<Page<TodoResponse>>> getTodos(@RequestParam(defaultValue = "0") int page,
+                        @RequestParam(defaultValue = "10") int size,
+                        @RequestParam(defaultValue = "createdAt") String sortBy,
+                        @RequestParam(defaultValue = "desc") String direction) {
+                Page<TodoResponse> todoResponse = todoService.getTodos(page, size, sortBy, direction);
                 return ResponseEntity.status(HttpStatus.OK).body(
-                                BaseResponse.<List<TodoResponse>>builder()
+                                BaseResponse.<Page<TodoResponse>>builder()
                                                 .success(true)
                                                 .statusCode(HttpStatus.OK.value())
                                                 .message("Get TODO(s) successfully.")
@@ -108,4 +112,18 @@ public class TodoController {
                                                 .build());
         }
 
+        @PutMapping("/status/{id}")
+        public ResponseEntity<BaseResponse<TodoResponse>> updateStatus(@PathVariable Long id,
+                        @RequestBody TodoUpdateStatusRequest request) {
+
+                TodoResponse todoResponse = todoService.updateStatus(id, request);
+                return ResponseEntity.status(HttpStatus.OK).body(
+                                BaseResponse.<TodoResponse>builder()
+                                                .success(true)
+                                                .statusCode(HttpStatus.OK.value())
+                                                .message("Update status successfully.")
+                                                .data(todoResponse)
+                                                .build());
+
+        }
 }

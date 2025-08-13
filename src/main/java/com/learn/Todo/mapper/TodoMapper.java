@@ -8,6 +8,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import com.learn.Todo.dto.request.TodoCompletionRequest;
 import com.learn.Todo.dto.request.TodoCreationRequest;
 import com.learn.Todo.dto.request.TodoUpdateRequest;
+import com.learn.Todo.dto.request.TodoUpdateStatusRequest;
 import com.learn.Todo.dto.response.TodoResponse;
 import com.learn.Todo.entity.Todo;
 
@@ -32,6 +33,12 @@ public interface TodoMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     Todo toTodoCompletionRequest(TodoCompletionRequest request, @MappingTarget Todo todo);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "text", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    Todo toTodoUpdateStatusRequest(TodoUpdateStatusRequest request, @MappingTarget Todo todo);
 
     TodoResponse toTodoResponse(Todo todo);
 }

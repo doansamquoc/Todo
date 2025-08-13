@@ -1,14 +1,18 @@
 package com.learn.Todo.service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.learn.Todo.dto.request.TodoCompletionRequest;
 import com.learn.Todo.dto.request.TodoCreationRequest;
 import com.learn.Todo.dto.request.TodoUpdateRequest;
+import com.learn.Todo.dto.request.TodoUpdateStatusRequest;
 import com.learn.Todo.dto.response.TodoResponse;
 import com.learn.Todo.entity.Todo;
 import com.learn.Todo.exception.BaseException;
@@ -24,8 +28,11 @@ public class TodoService {
     @Autowired
     TodoMapper todoMapper;
 
-    public List<TodoResponse> getTodos() {
-        return todoRepository.findAll().stream().map(todoMapper::toTodoResponse).toList();
+    public Page<TodoResponse> getTodos(int page, int size, String sortBy, String direction) {
+        Sort sort = Sort.by("desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return todoRepository.findAll(pageable).map(todoMapper::toTodoResponse);
     }
 
     public TodoResponse getTodoById(Long id) {
@@ -50,6 +57,26 @@ public class TodoService {
 
         TodoCompletionRequest request = new TodoCompletionRequest(TodoStatus.COMPLETED, LocalDateTime.now());
         todo = todoMapper.toTodoCompletionRequest(request, todo);
+
+        return todoMapper.toTodoResponse(todoRepository.save(todo));
+    }
+
+    public TodoResponse updateStatus(Long id, TodoUpdateStatusRequest request) {
+        Todo todo = findById(id);
+
+        switch (request.getStatus()) {
+            case COMPLETED:
+                request = new TodoUpdateStatusRequest(TodoStatus.COMPLETED, LocalDateTime.now());
+                break;
+            case PENDING:
+                request = new TodoUpdateStatusRequest(TodoStatus.PENDING, null);
+                break;
+            default:
+                request = new TodoUpdateStatusRequest(TodoStatus.CANCELED, null);
+                break;
+        }
+
+        todo = todoMapper.toTodoUpdateStatusRequest(request, todo);
 
         return todoMapper.toTodoResponse(todoRepository.save(todo));
     }
