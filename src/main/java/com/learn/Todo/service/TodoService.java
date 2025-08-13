@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.learn.Todo.dto.request.TodoCompletionRequest;
@@ -15,9 +16,11 @@ import com.learn.Todo.dto.request.TodoUpdateRequest;
 import com.learn.Todo.dto.request.TodoUpdateStatusRequest;
 import com.learn.Todo.dto.response.TodoResponse;
 import com.learn.Todo.entity.Todo;
+import com.learn.Todo.entity.User;
 import com.learn.Todo.exception.BaseException;
 import com.learn.Todo.mapper.TodoMapper;
 import com.learn.Todo.repository.TodoRepository;
+import com.learn.Todo.repository.UserRepository;
 import com.learn.Todo.type.TodoStatus;
 import com.learn.Todo.util.ErrorMessage;
 
@@ -26,13 +29,19 @@ public class TodoService {
     @Autowired
     TodoRepository todoRepository;
     @Autowired
+    UserRepository userRepository;
+    @Autowired
     TodoMapper todoMapper;
 
     public Page<TodoResponse> getTodos(int page, int size, String sortBy, String direction) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        user = userRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new BaseException(ErrorMessage.USER_NOT_FOUND));
+
         Sort sort = Sort.by("desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        return todoRepository.findAll(pageable).map(todoMapper::toTodoResponse);
+        return todoRepository.findByUser(user, pageable).map(todoMapper::toTodoResponse);
     }
 
     public TodoResponse getTodoById(Long id) {
@@ -40,7 +49,13 @@ public class TodoService {
     }
 
     public TodoResponse createTodo(TodoCreationRequest request) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        System.out.println("> EMAIL: " + user.getEmail());
+        user = userRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new BaseException(ErrorMessage.USER_NOT_FOUND));
+
         Todo todo = todoMapper.toTodoCreationRequest(request);
+        todo.setUser(user);
 
         return todoMapper.toTodoResponse(todoRepository.save(todo));
     }
